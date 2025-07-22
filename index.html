@@ -1,13 +1,124 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Omarai - AI Agent Platform</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Omarai">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Omarai">
+    <meta name="description" content="منصة الذكاء الاصطناعي عمر - مساعدك الذكي المدعوم بـ Graphlit">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-192x192.png">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/icon-192x192.png">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Omarai - AI Agent Platform">
+    <meta property="og:description" content="منصة الذكاء الاصطناعي عمر - مساعدك الذكي المدعوم بـ Graphlit">
+    <meta property="og:site_name" content="Omarai">
+    <meta property="og:url" content="https://omarai.app">
+    <meta property="og:image" content="/icons/icon-512x512.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://omarai.app">
+    <meta name="twitter:title" content="Omarai - AI Agent Platform">
+    <meta name="twitter:description" content="منصة الذكاء الاصطناعي عمر - مساعدك الذكي المدعوم بـ Graphlit">
+    <meta name="twitter:image" content="/icons/icon-512x512.png">
+    <meta name="twitter:creator" content="@omarai">
+    
+    <title>Omarai - منصة الذكاء الاصطناعي</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- PWA Installation Script -->
+    <script>
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+      
+      // PWA Install Prompt
+      let deferredPrompt;
+      
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Show install button
+        const installButton = document.createElement('button');
+        installButton.textContent = 'تثبيت التطبيق';
+        installButton.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: #3b82f6;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 8px;
+          font-size: 14px;
+          cursor: pointer;
+          z-index: 1000;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          font-family: system-ui, -apple-system, sans-serif;
+        `;
+        
+        installButton.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            deferredPrompt = null;
+            installButton.remove();
+          }
+        });
+        
+        document.body.appendChild(installButton);
+        
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+          if (installButton.parentNode) {
+            installButton.remove();
+          }
+        }, 10000);
+      });
+      
+      // Handle app installed
+      window.addEventListener('appinstalled', (evt) => {
+        console.log('Omarai PWA was installed');
+      });
+    </script>
   </body>
 </html>
